@@ -1,0 +1,72 @@
+--Utilizando o conceito de DDL manual, crie uma tabela chamada 
+--T_RHSTU_MEDICO_CONTATO com as seguintes colunas: cd_medico
+--number(10) sendo PK e FK, id_contato number(3) PK, tp_contato varchar2(40), 
+--ds_contato varchar2(60), st_contato. Todas essas colunas devem ser 
+--obrigatórias
+
+CREATE TABLE T_RHTSU_MEDICO_CONTATO (
+     cd_medico NUMBER(10) NOT NULL,
+     id_contato NUMBER(3) NOT NULL,
+     tp_contato VARCHAR2(40) NOT NULL,
+     ds_contato VARCHAR2(60) NOT NULL,
+     st_contato VARCHAR2(1) NOT NULL,
+     CONSTRAINT pk_mendico_contato PRIMARY KEY(cd_medico, id_contato)
+     );
+     
+     --Para a coluna tp_contato apenas os seguintes valores são possíveis: TF 
+--(Telefone Fixo); TC (Telefone Celular); EC (Email Contato).
+
+ALTER TABLE T_RHSTU_MEDICO_CONTATO
+ADD CONSTRAINT ck_tp_contato CHECK (tp_contato IN ('TF','TC','EC'));
+
+--Para a coluna st_contato apenas os valores (A)tivo e (I)nativo são válidos.
+
+ALTER TABLE T_RHSTU_MEDICO_CONTATO
+ADD CONSTRAINT ck_st_contato CHECK (st_contato IN ('A','I'));
+
+--Associe a tabela T_RHSTU_MEDICO_CONTATO ao médico, onde 1 médico pode 
+--ter vários contatos.
+
+ALTER TABLE T_RHSTU_MEDICO_CONTATO
+ADD CONSTRAINT fk_medico_contato
+FOREIGN KEY (cd_medico)
+REFERENCES T_RHSTU_MEDICO (cd_medico);
+
+--Houve um equívoco e agora a coluna TP_CONTATO deve ter o conteúdo 
+--VARCHAR2(2). Realize o comando DDL que altere essa estrutura.
+
+ALTER TABLE T_RHSTU_MEDICO_CONTATO
+MODIFY tp_contato VARCHAR2(2);
+
+--Cadastre 1 médico e um contato possível de ser feito com ele, criando 2 
+--instruções INSERT. Confirme as transações pendentes.
+
+INSERT INTO T_RHSTU_MEDICO (cd_medico, nm_medico)
+VALUES (1, 'Dr. João Silva');
+INSERT INTO T_RHSTU_MEDICO_CONTATO
+(cd_medico, id_contato, tp_contato, ds_contato, st_contato)
+VALUES (1, 1, 'TC', '(11) 99999-9999', 'A');
+
+--Na tabela T_RHSTU_MEDICO_CONTATO , crie uma coluna DT_INCLUSAO do tipo 
+--DATE com conteúdo obrigatório.
+
+ALTER TABLE T_RHSTU_MEDICO_CONTATO
+ADD dt_inclusao DATE NOT NULL;
+
+--Agora essa coluna deve ser opcional. Utilize o comando ALTER TABLE para criar 
+--essa restrição.
+
+ALTER TABLE T_RHSTU_MEDICO_CONTATO
+MODIFY dt_inclusao DATE NULL;
+
+--Cadastre 1 médico e um contato possível de ser feito com ele, criando 2 
+--instruções INSERT. Confirme as transações pendentes.
+
+INSERT INTO T_RHSTU_MEDICO (cd_medico, nm_medico)
+VALUES (2, 'Dra. Maria Oliveira');
+
+INSERT INTO T_RHSTU_MEDICO_CONTATO
+(cd_medico, id_contato, tp_contato, ds_contato, st_contato, dt_inclusao)
+VALUES (2, 1, 'EC', 'maria.oliveira@hospital.com', 'A', SYSDATE);
+
+
